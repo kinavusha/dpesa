@@ -1,37 +1,34 @@
-import { Bell, MessageSquare, User, ArrowUpRight, ArrowDownLeft, Wallet } from "lucide-react";
+import { Bell, User, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
 const Dashboard = () => {
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
       {/* Header */}
-      <div className="bg-white px-6 py-6">
+      <div className="bg-white dark:bg-gray-800 px-6 py-6">
         <div className="flex items-center justify-between mb-8">
           <div className="flex flex-col">
-            <span className="text-gray-600 mb-2">Welcome back</span>
-            <span className="font-medium">Brian Kinavusha</span>
+            <span className="text-gray-600 dark:text-gray-400 mb-2">Welcome back</span>
+            <span className="font-medium dark:text-white">Brian Kinavusha</span>
           </div>
           <div className="flex items-center space-x-4">
             <Link to="/notifications" className="relative">
-              <MessageSquare size={24} className="text-gray-600" />
-            </Link>
-            <Link to="/notifications" className="relative">
-              <Bell size={24} className="text-gray-600" />
+              <Bell size={24} className="text-gray-600 dark:text-gray-400" />
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
                 2
               </span>
             </Link>
             <Link to="/settings">
-              <User size={24} className="text-gray-600" />
+              <User size={24} className="text-gray-600 dark:text-gray-400" />
             </Link>
           </div>
         </div>
 
         {/* Balance */}
         <div className="mb-8">
-          <div className="text-gray-600 mb-3">Deriv Balance</div>
-          <div className="text-4xl font-bold mb-1">$ 2.00</div>
+          <div className="text-gray-600 dark:text-gray-400 mb-3">Deriv Balance</div>
+          <div className="text-4xl font-bold mb-1 dark:text-white">$ 2.00</div>
         </div>
 
         {/* Action Buttons */}
@@ -62,7 +59,7 @@ const Dashboard = () => {
             {transactions.map((transaction) => (
               <div
                 key={transaction.id}
-                className="flex items-center justify-between bg-white rounded-lg p-4 shadow-sm"
+                className="flex items-center justify-between bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm"
               >
                 <div className="flex items-center space-x-4">
                   <div
@@ -78,7 +75,7 @@ const Dashboard = () => {
                     <div className="font-medium">
                       {transaction.type === "deposit" ? "Deposit" : "Withdraw"}
                     </div>
-                    <div className="text-sm text-gray-500">{transaction.date}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">{transaction.date}</div>
                   </div>
                 </div>
                 <div
