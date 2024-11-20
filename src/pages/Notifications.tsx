@@ -20,25 +20,25 @@ const Notifications = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white px-6 py-4 flex items-center space-x-4 border-b">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="bg-white dark:bg-gray-800 px-6 py-4 flex items-center space-x-4 border-b dark:border-gray-700">
         <Link to="/dashboard">
-          <ArrowLeft size={24} className="text-gray-600" />
+          <ArrowLeft size={24} className="text-gray-600 dark:text-gray-300" />
         </Link>
-        <h1 className="text-xl font-semibold">Notifications</h1>
+        <h1 className="text-xl font-semibold dark:text-white">Notifications</h1>
       </div>
 
       <div className="p-6 space-y-4">
         {notifications.map((notification) => (
           <div
             key={notification.id}
-            className={`bg-white p-4 rounded-lg shadow-sm ${
+            className={`bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm ${
               !notification.read ? "border-l-4 border-dpesa-bright-red" : ""
             }`}
           >
-            <h3 className="font-medium mb-1">{notification.title}</h3>
-            <p className="text-gray-600 text-sm mb-2">{notification.message}</p>
-            <span className="text-xs text-gray-500">{notification.time}</span>
+            <h3 className="font-medium dark:text-white">{notification.title}</h3>
+            <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">{notification.message}</p>
+            <span className="text-xs text-gray-500 dark:text-gray-400">{notification.time}</span>
           </div>
         ))}
       </div>

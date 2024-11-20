@@ -1,5 +1,6 @@
 import { ArrowUpRight, ArrowDownLeft, Bell, User } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
 const transactions = [
@@ -52,17 +53,19 @@ const History = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="bg-white px-6 py-4 flex justify-between items-center shadow-sm">
-        <h1 className="text-xl font-semibold">Transaction History</h1>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+      <div className="bg-white dark:bg-gray-800 px-6 py-4 flex justify-between items-center shadow-sm">
+        <h1 className="text-xl font-semibold dark:text-white">Transaction History</h1>
         <div className="flex items-center space-x-4">
-          <button className="relative">
-            <Bell size={24} />
+          <Link to="/notifications" className="relative">
+            <Bell size={24} className="text-gray-600 dark:text-gray-300" />
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
               2
             </span>
-          </button>
-          <User size={24} />
+          </Link>
+          <Link to="/settings">
+            <User size={24} className="text-gray-600 dark:text-gray-300" />
+          </Link>
         </div>
       </div>
 
@@ -73,7 +76,7 @@ const History = () => {
             className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
               activeTab === 'deposits'
                 ? 'bg-dpesa-bright-red text-white'
-                : 'bg-gray-100 text-gray-600'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
             }`}
           >
             Deposits
@@ -83,7 +86,7 @@ const History = () => {
             className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
               activeTab === 'withdrawals'
                 ? 'bg-dpesa-bright-red text-white'
-                : 'bg-gray-100 text-gray-600'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
             }`}
           >
             Withdrawals
@@ -92,14 +95,14 @@ const History = () => {
 
         <div className="space-y-4">
           {filteredTransactions.map((transaction) => (
-            <div key={transaction.id} className="dpesa-card">
+            <div key={transaction.id} className="dpesa-card dark:bg-gray-800">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div
                     className={`p-2 rounded-full ${
                       transaction.type === "deposit"
-                        ? "bg-green-100 text-green-600"
-                        : "bg-red-100 text-red-600"
+                        ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
+                        : "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300"
                     }`}
                   >
                     {transaction.type === "deposit" ? (
@@ -109,10 +112,10 @@ const History = () => {
                     )}
                   </div>
                   <div>
-                    <div className="font-medium text-dpesa-text capitalize">
+                    <div className="font-medium text-gray-900 dark:text-white capitalize">
                       {transaction.type}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
                       REF: {transaction.reference}
                     </div>
                   </div>
