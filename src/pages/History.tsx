@@ -1,20 +1,25 @@
-import { ArrowUpRight, ArrowDownLeft } from "lucide-react";
+import { ArrowUpRight, ArrowDownLeft, Bell, User } from "lucide-react";
+import { useState } from "react";
 import Navbar from "../components/Navbar";
 
 const transactions = [
   {
     id: 1,
-    type: "deposit",
-    amount: 500,
+    type: "withdrawal",
+    amount: 10.03,
     date: "2024-03-15",
-    status: "completed"
+    status: "completed",
+    reference: "CR3775256",
+    country: "KE"
   },
   {
     id: 2,
-    type: "withdrawal",
-    amount: 200,
+    type: "deposit",
+    amount: 5.03,
     date: "2024-03-14",
-    status: "completed"
+    status: "completed",
+    reference: "CR3775256",
+    country: "US"
   },
   {
     id: 3,
@@ -40,13 +45,53 @@ const transactions = [
 ];
 
 const History = () => {
+  const [activeTab, setActiveTab] = useState<'deposits' | 'withdrawals'>('deposits');
+  
+  const filteredTransactions = transactions.filter(t => 
+    activeTab === 'deposits' ? t.type === 'deposit' : t.type === 'withdrawal'
+  );
+
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="container max-w-md mx-auto px-6 py-8">
-        <h1 className="text-2xl font-bold text-dpesa-text mb-6">Transaction History</h1>
+      <div className="bg-white px-6 py-4 flex justify-between items-center shadow-sm">
+        <h1 className="text-xl font-semibold">Transaction History</h1>
+        <div className="flex items-center space-x-4">
+          <button className="relative">
+            <Bell size={24} />
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+              2
+            </span>
+          </button>
+          <User size={24} />
+        </div>
+      </div>
+
+      <div className="container max-w-md mx-auto px-6 py-4">
+        <div className="flex space-x-2 mb-6">
+          <button
+            onClick={() => setActiveTab('deposits')}
+            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
+              activeTab === 'deposits'
+                ? 'bg-dpesa-bright-red text-white'
+                : 'bg-gray-100 text-gray-600'
+            }`}
+          >
+            Deposits
+          </button>
+          <button
+            onClick={() => setActiveTab('withdrawals')}
+            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
+              activeTab === 'withdrawals'
+                ? 'bg-dpesa-bright-red text-white'
+                : 'bg-gray-100 text-gray-600'
+            }`}
+          >
+            Withdrawals
+          </button>
+        </div>
 
         <div className="space-y-4">
-          {transactions.map((transaction) => (
+          {filteredTransactions.map((transaction) => (
             <div key={transaction.id} className="dpesa-card">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
@@ -68,7 +113,7 @@ const History = () => {
                       {transaction.type}
                     </div>
                     <div className="text-sm text-gray-500">
-                      {new Date(transaction.date).toLocaleDateString()}
+                      REF: {transaction.reference}
                     </div>
                   </div>
                 </div>
