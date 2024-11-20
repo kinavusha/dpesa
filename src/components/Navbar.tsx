@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, History, User, Wallet } from "lucide-react";
+import { Home, History, User } from "lucide-react";
 
 const Navbar = () => {
   const location = useLocation();
