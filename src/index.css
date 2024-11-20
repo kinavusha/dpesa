@@ -37,26 +37,28 @@
   }
 }
 
-.dpesa-input {
-  @apply w-full px-4 py-3 rounded-lg bg-[#F5F5F5] border border-[#E0E0E0] focus:outline-none focus:ring-2 focus:ring-dpesa-primary focus:border-transparent;
-}
+@layer components {
+  .dpesa-input {
+    @apply w-full px-4 py-3 rounded-lg bg-[#F5F5F5] border border-[#E0E0E0] focus:outline-none focus:ring-2 focus:ring-dpesa-bright-red focus:border-transparent;
+  }
 
-.dpesa-button {
-  @apply px-6 py-3 rounded-lg font-semibold text-white transition-all duration-200 hover:opacity-90 focus:ring-2 focus:ring-offset-2;
-}
+  .dpesa-button {
+    @apply px-6 py-3 rounded-lg font-semibold text-white transition-all duration-200 hover:opacity-90 focus:ring-2 focus:ring-offset-2;
+  }
 
-.dpesa-button-primary {
-  @apply dpesa-button bg-dpesa-primary focus:ring-dpesa-primary;
-}
+  .dpesa-button-primary {
+    @apply dpesa-button bg-dpesa-bright-red focus:ring-dpesa-bright-red;
+  }
 
-.dpesa-button-secondary {
-  @apply dpesa-button bg-dpesa-secondary focus:ring-dpesa-secondary;
-}
+  .dpesa-button-secondary {
+    @apply dpesa-button bg-dpesa-deriv-blue focus:ring-dpesa-deriv-blue;
+  }
 
-.dpesa-button-danger {
-  @apply dpesa-button bg-dpesa-danger focus:ring-dpesa-danger;
-}
+  .dpesa-button-danger {
+    @apply dpesa-button bg-dpesa-light-red focus:ring-dpesa-light-red;
+  }
 
-.dpesa-card {
-  @apply bg-white rounded-xl shadow-lg p-6 animate-fade-in;
+  .dpesa-card {
+    @apply bg-white rounded-xl shadow-lg p-6 animate-fade-in;
+  }
 }

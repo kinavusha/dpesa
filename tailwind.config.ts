@@ -26,6 +26,9 @@ export default {
           "light-gray": "#CCCCCC",
           "dark-gray": "#333333",
           white: "#FFFFFF",
+          primary: "#FF4C4C",    // Added primary color
+          secondary: "#2B70D3",  // Added secondary color
+          danger: "#FF5C00",     // Added danger color
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
