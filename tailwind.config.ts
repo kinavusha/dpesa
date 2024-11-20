@@ -20,12 +20,12 @@ export default {
     extend: {
       colors: {
         dpesa: {
-          primary: "#007A5C",
-          secondary: "#007BFF",
-          danger: "#D9534F",
-          text: "#0D0D0D",
-          "input-bg": "#F5F5F5",
-          "input-border": "#E0E0E0",
+          "bright-red": "#FF4C4C",
+          "deriv-blue": "#2B70D3",
+          "light-red": "#FF5C00",
+          "light-gray": "#CCCCCC",
+          "dark-gray": "#333333",
+          white: "#FFFFFF",
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

@@ -7,13 +7,13 @@ const Navbar = () => {
   const isActive = (path: string) => location.pathname === path;
   
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-3">
+    <nav className="fixed bottom-0 left-0 right-0 bg-dpesa-deriv-blue py-3">
       <div className="container max-w-md mx-auto px-6">
         <div className="flex justify-between items-center">
           <Link
             to="/dashboard"
-            className={`flex flex-col items-center space-y-1 ${
-              isActive("/dashboard") ? "text-dpesa-primary" : "text-gray-500"
+            className={`flex flex-col items-center space-y-1 text-dpesa-white hover:bg-dpesa-bright-red hover:bg-opacity-90 rounded-lg p-2 transition-colors ${
+              isActive("/dashboard") ? "bg-dpesa-bright-red" : ""
             }`}
           >
             <Home size={24} />
@@ -22,8 +22,8 @@ const Navbar = () => {
           
           <Link
             to="/deposit"
-            className={`flex flex-col items-center space-y-1 ${
-              isActive("/deposit") ? "text-dpesa-primary" : "text-gray-500"
+            className={`flex flex-col items-center space-y-1 text-dpesa-white hover:bg-dpesa-bright-red hover:bg-opacity-90 rounded-lg p-2 transition-colors ${
+              isActive("/deposit") ? "bg-dpesa-bright-red" : ""
             }`}
           >
             <Wallet size={24} />
@@ -32,8 +32,8 @@ const Navbar = () => {
           
           <Link
             to="/history"
-            className={`flex flex-col items-center space-y-1 ${
-              isActive("/history") ? "text-dpesa-primary" : "text-gray-500"
+            className={`flex flex-col items-center space-y-1 text-dpesa-white hover:bg-dpesa-bright-red hover:bg-opacity-90 rounded-lg p-2 transition-colors ${
+              isActive("/history") ? "bg-dpesa-bright-red" : ""
             }`}
           >
             <History size={24} />
@@ -42,8 +42,8 @@ const Navbar = () => {
           
           <Link
             to="/settings"
-            className={`flex flex-col items-center space-y-1 ${
-              isActive("/settings") ? "text-dpesa-primary" : "text-gray-500"
+            className={`flex flex-col items-center space-y-1 text-dpesa-white hover:bg-dpesa-bright-red hover:bg-opacity-90 rounded-lg p-2 transition-colors ${
+              isActive("/settings") ? "bg-dpesa-bright-red" : ""
             }`}
           >
             <Settings size={24} />
