@@ -1,4 +1,4 @@
-import { Bell, MessageSquare, User } from "lucide-react";
+import { Bell, MessageSquare, User, ArrowUpRight, ArrowDownLeft, Wallet } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
@@ -6,31 +6,32 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
-      <div className="bg-white px-6 py-4">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-              <User size={24} className="text-gray-500" />
-            </div>
-            <span className="font-medium">Purity Jepchirchir</span>
+      <div className="bg-white px-6 py-6">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col">
+            <span className="text-gray-600 mb-2">Welcome back</span>
+            <span className="font-medium">Brian Kinavusha</span>
           </div>
           <div className="flex items-center space-x-4">
-            <button className="relative">
+            <Link to="/notifications" className="relative">
               <MessageSquare size={24} className="text-gray-600" />
-            </button>
-            <button className="relative">
+            </Link>
+            <Link to="/notifications" className="relative">
               <Bell size={24} className="text-gray-600" />
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
                 2
               </span>
-            </button>
+            </Link>
+            <Link to="/settings">
+              <User size={24} className="text-gray-600" />
+            </Link>
           </div>
         </div>
 
         {/* Balance */}
-        <div className="mb-6">
+        <div className="mb-8">
+          <div className="text-gray-600 mb-3">Deriv Balance</div>
           <div className="text-4xl font-bold mb-1">$ 2.00</div>
-          <div className="text-gray-500">Balance</div>
         </div>
 
         {/* Action Buttons */}
@@ -51,7 +52,12 @@ const Dashboard = () => {
 
         {/* Transactions */}
         <div>
-          <h2 className="text-xl font-semibold mb-4">Transactions</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Transactions</h2>
+            <Link to="/history" className="text-dpesa-deriv-blue hover:underline">
+              View all
+            </Link>
+          </div>
           <div className="space-y-4">
             {transactions.map((transaction) => (
               <div
@@ -66,7 +72,7 @@ const Dashboard = () => {
                         : "bg-red-100 text-red-600"
                     }`}
                   >
-                    {transaction.type === "deposit" ? "D" : "W"}
+                    {transaction.type === "deposit" ? <ArrowDownLeft size={24} /> : <ArrowUpRight size={24} />}
                   </div>
                   <div>
                     <div className="font-medium">

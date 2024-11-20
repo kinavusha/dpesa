@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, History, User } from "lucide-react";
+import { Home, History, User, Wallet } from "lucide-react";
 
 const Navbar = () => {
   const location = useLocation();
@@ -18,6 +18,16 @@ const Navbar = () => {
           >
             <Home size={24} />
             <span className="text-xs">Home</span>
+          </Link>
+          
+          <Link
+            to="/deposit"
+            className={`flex flex-col items-center space-y-1 text-dpesa-deriv-blue hover:text-dpesa-bright-red transition-colors ${
+              isActive("/deposit") ? "text-dpesa-bright-red" : ""
+            }`}
+          >
+            <Wallet size={24} />
+            <span className="text-xs">Deposit</span>
           </Link>
           
           <Link
