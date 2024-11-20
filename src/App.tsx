@@ -16,10 +16,10 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
       <TooltipProvider>
         <Toaster />
-        <Sonner position="top-center" theme="system" />
+        <Sonner position="top-center" theme="light" />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
