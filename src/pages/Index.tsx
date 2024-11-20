@@ -18,17 +18,26 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center bg-gray-50 px-6">
+    <div className="min-h-screen flex flex-col justify-center bg-gray-50 dark:bg-gray-900 px-6">
       <div className="max-w-md w-full mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-dpesa-dark-gray mb-2">Dpesa</h1>
-          <p className="text-gray-600">Welcome back! Please login to continue.</p>
+          <h1 className="text-4xl font-bold text-dpesa-dark-gray dark:text-white mb-2">Dpesa</h1>
+          <p className="text-gray-600 dark:text-gray-300">Welcome back! Please login to continue.</p>
+          
+          {/* Image container below headline */}
+          <div className="mt-6 mb-8 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+            <img 
+              src="https://www.kinovadigitalmarketing.com/wp-content/uploads/2024/11/download.webp"
+              alt="Dpesa Welcome"
+              className="w-full h-auto rounded-lg"
+            />
+          </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-8 animate-fade-in">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 animate-fade-in">
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Email Address
               </label>
               <input
@@ -36,13 +45,13 @@ const Index = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-dpesa-light-gray focus:outline-none focus:ring-2 focus:ring-dpesa-deriv-blue focus:border-transparent"
+                className="dpesa-input"
                 placeholder="Enter your email"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Password
               </label>
               <input
@@ -50,31 +59,37 @@ const Index = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-dpesa-light-gray focus:outline-none focus:ring-2 focus:ring-dpesa-deriv-blue focus:border-transparent"
+                className="dpesa-input"
                 placeholder="Enter your password"
               />
             </div>
 
-            <button 
-              type="submit" 
-              className="w-full px-6 py-3 rounded-lg font-semibold text-dpesa-white bg-dpesa-bright-red hover:bg-opacity-90 transition-colors"
-            >
-              Login
-            </button>
+            {/* Login and Sign Up buttons side by side */}
+            <div className="flex gap-4 justify-between">
+              <button 
+                type="submit" 
+                className="flex-1 px-4 py-2 text-sm rounded-lg font-semibold text-dpesa-white bg-dpesa-bright-red hover:bg-opacity-90 transition-colors"
+              >
+                Login
+              </button>
+              
+              <button 
+                type="button"
+                className="flex-1 px-4 py-2 text-sm rounded-lg font-semibold text-dpesa-dark-gray dark:text-white bg-dpesa-light-gray dark:bg-gray-700 hover:bg-opacity-90 transition-colors"
+              >
+                Sign Up
+              </button>
+            </div>
           </form>
 
-          <div className="mt-6 space-y-4">
-            <button 
-              className="w-full px-6 py-3 rounded-lg font-semibold text-dpesa-white bg-dpesa-deriv-blue hover:bg-opacity-90 transition-colors"
+          {/* Forgot Password as a text link */}
+          <div className="mt-6 text-center">
+            <a 
+              href="#" 
+              className="text-sm text-dpesa-deriv-blue dark:text-blue-400 hover:underline"
             >
               Forgot Password?
-            </button>
-            
-            <button 
-              className="w-full px-6 py-3 rounded-lg font-semibold text-dpesa-dark-gray bg-dpesa-light-gray hover:bg-opacity-90 transition-colors"
-            >
-              Sign Up
-            </button>
+            </a>
           </div>
         </div>
       </div>
