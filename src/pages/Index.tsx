@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 const DERIV_APP_ID = "65840";
-const DERIV_OAUTH_URL = `https://oauth.deriv.com/oauth2/authorize?app_id=${DERIV_APP_ID}`;
+const DERIV_OAUTH_URL = `https://oauth.deriv.com/oauth2/authorize?app_id=${DERIV_APP_ID}&redirect_uri=${encodeURIComponent("https://dpesa.lovable.app/dashboard")}`;
 
 const Index = () => {
   const [searchParams] = useSearchParams();
@@ -12,7 +12,6 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Handle OAuth redirect
     const handleOAuthRedirect = async () => {
       const acct = searchParams.get('acct1');
       const token = searchParams.get('token1');
@@ -21,7 +20,7 @@ const Index = () => {
       if (acct && token && currency) {
         setIsLoading(true);
         try {
-          // First create or get the user in Supabase
+          // Create or get the user in Supabase
           const { data: { user }, error: authError } = await supabase.auth.signUp({
             email: `${acct}@deriv.user`,
             password: token.slice(0, 20), // Use part of the token as password
