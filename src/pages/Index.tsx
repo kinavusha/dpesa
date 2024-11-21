@@ -1,20 +1,65 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+
+const DERIV_APP_ID = "65840";
+const DERIV_OAUTH_URL = `https://oauth.deriv.com/oauth2/authorize?app_id=${DERIV_APP_ID}`;
 
 const Index = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email && password) {
-      toast.success("Login successful!");
-      navigate("/dashboard");
-    } else {
-      toast.error("Please fill in all fields");
-    }
+  useEffect(() => {
+    // Handle OAuth redirect
+    const handleOAuthRedirect = async () => {
+      const acct = searchParams.get('acct1');
+      const token = searchParams.get('token1');
+      const currency = searchParams.get('cur1');
+
+      if (acct && token && currency) {
+        setIsLoading(true);
+        try {
+          // First create or get the user in Supabase
+          const { data: { user }, error: authError } = await supabase.auth.signUp({
+            email: `${acct}@deriv.user`,
+            password: token.slice(0, 20), // Use part of the token as password
+          });
+
+          if (authError && authError.message !== 'User already registered') {
+            throw authError;
+          }
+
+          // Store the Deriv account details
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .upsert({
+              id: user?.id,
+              deriv_account_id: acct,
+              deriv_token: token,
+              deriv_currency: currency,
+              is_virtual: false,
+            });
+
+          if (profileError) throw profileError;
+
+          toast.success("Successfully logged in!");
+          navigate("/dashboard");
+        } catch (error) {
+          console.error('OAuth error:', error);
+          toast.error("Failed to login. Please try again.");
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    handleOAuthRedirect();
+  }, [searchParams, navigate]);
+
+  const handleDerivLogin = () => {
+    window.location.href = DERIV_OAUTH_URL;
   };
 
   return (
@@ -22,9 +67,8 @@ const Index = () => {
       <div className="max-w-md w-full mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-dpesa-dark-gray dark:text-white mb-2">Dpesa</h1>
-          <p className="text-gray-600 dark:text-gray-300">Welcome back! Please login to continue.</p>
+          <p className="text-gray-600 dark:text-gray-300">Welcome! Please login with your Deriv account to continue.</p>
           
-          {/* Image container below headline */}
           <div className="mt-6 mb-8 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
             <img 
               src="https://www.kinovadigitalmarketing.com/wp-content/uploads/2024/11/download.webp"
@@ -35,62 +79,18 @@ const Index = () => {
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 animate-fade-in">
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                Email Address
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="dpesa-input"
-                placeholder="Enter your email"
-              />
+          {isLoading ? (
+            <div className="text-center">
+              <p className="text-gray-600 dark:text-gray-300">Logging you in...</p>
             </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="dpesa-input"
-                placeholder="Enter your password"
-              />
-            </div>
-
-            {/* Login and Sign Up buttons side by side */}
-            <div className="flex gap-4 justify-between">
-              <button 
-                type="submit" 
-                className="flex-1 px-4 py-2 text-sm rounded-lg font-semibold text-dpesa-white bg-dpesa-bright-red hover:bg-opacity-90 transition-colors"
-              >
-                Login
-              </button>
-              
-              <button 
-                type="button"
-                className="flex-1 px-4 py-2 text-sm rounded-lg font-semibold text-dpesa-dark-gray dark:text-white bg-dpesa-light-gray dark:bg-gray-700 hover:bg-opacity-90 transition-colors"
-              >
-                Sign Up
-              </button>
-            </div>
-          </form>
-
-          {/* Forgot Password as a text link */}
-          <div className="mt-6 text-center">
-            <a 
-              href="#" 
-              className="text-sm text-dpesa-deriv-blue dark:text-blue-400 hover:underline"
+          ) : (
+            <button 
+              onClick={handleDerivLogin}
+              className="w-full px-6 py-3 bg-dpesa-bright-red text-white rounded-lg font-semibold hover:bg-opacity-90 transition-colors"
             >
-              Forgot Password?
-            </a>
-          </div>
+              Login with Deriv
+            </button>
+          )}
         </div>
       </div>
     </div>
