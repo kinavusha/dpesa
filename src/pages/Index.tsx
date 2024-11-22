@@ -15,14 +15,24 @@ const Index = () => {
   const [session, setSession] = useState(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        toast.error("Failed to get session: " + error.message);
+        return;
+      }
       setSession(session);
+      if (session) {
+        toast.success("Welcome back!");
+      }
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      if (session) {
+        toast.success("Successfully signed in!");
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -37,7 +47,6 @@ const Index = () => {
       if (acct && token && currency && session?.user) {
         setIsLoading(true);
         try {
-          // Connect to Deriv WebSocket API
           const ws = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${DERIV_APP_ID}`);
           
           ws.onopen = () => {
@@ -60,7 +69,6 @@ const Index = () => {
                 } 
               } = data;
 
-              // Store Deriv account details
               const { error: profileError } = await supabase
                 .from('profiles')
                 .upsert({
@@ -73,9 +81,12 @@ const Index = () => {
                   fullname,
                   deriv_accounts: account_list,
                   is_virtual: false,
+                  email: session.user.email,
                 });
 
-              if (profileError) throw profileError;
+              if (profileError) {
+                throw profileError;
+              }
 
               toast.success("Successfully connected Deriv account!");
               navigate("/dashboard");
@@ -108,38 +119,38 @@ const Index = () => {
     window.location.href = DERIV_OAUTH_URL;
   };
 
-  if (!session) {
-    return (
-      <div className="min-h-screen flex flex-col justify-center bg-gray-50 dark:bg-gray-900 px-6">
-        <div className="max-w-md w-full mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-dpesa-dark-gray dark:text-white mb-2">Dpesa</h1>
-            <p className="text-gray-600 dark:text-gray-300">Welcome! Please sign in or create an account.</p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-            <Auth
-              supabaseClient={supabase}
-              appearance={{ theme: ThemeSupa }}
-              providers={[]}
-              redirectTo="https://dpesa.lovable.app/dashboard"
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen flex flex-col justify-center bg-gray-50 dark:bg-gray-900 px-6">
       <div className="max-w-md w-full mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-dpesa-dark-gray dark:text-white mb-2">Connect Deriv</h1>
-          <p className="text-gray-600 dark:text-gray-300">Connect your Deriv account to continue.</p>
+          <h1 className="text-4xl font-bold text-dpesa-dark-gray dark:text-white mb-2">Dpesa</h1>
+          <p className="text-gray-600 dark:text-gray-300">
+            {!session ? "Welcome! Please sign in or create an account." : "Connect your Deriv account to continue."}
+          </p>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 animate-fade-in">
-          {isLoading ? (
+          {!session ? (
+            <Auth
+              supabaseClient={supabase}
+              appearance={{ 
+                theme: ThemeSupa,
+                variables: {
+                  default: {
+                    colors: {
+                      brand: '#ef4444',
+                      brandAccent: '#dc2626',
+                    },
+                  },
+                },
+              }}
+              providers={[]}
+              redirectTo="https://dpesa.lovable.app/dashboard"
+              onError={(error) => {
+                toast.error(error.message);
+              }}
+            />
+          ) : isLoading ? (
             <div className="text-center">
               <p className="text-gray-600 dark:text-gray-300">Connecting your Deriv account...</p>
             </div>
