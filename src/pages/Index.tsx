@@ -146,8 +146,13 @@ const Index = () => {
               }}
               providers={[]}
               redirectTo="https://dpesa.lovable.app/dashboard"
-              onError={(error) => {
-                toast.error(error.message);
+              localization={{
+                variables: {
+                  sign_in: {
+                    email_label: 'Email',
+                    password_label: 'Password',
+                  },
+                },
               }}
             />
           ) : isLoading ? (
