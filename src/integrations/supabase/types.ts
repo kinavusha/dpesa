@@ -13,8 +13,13 @@ export type Database = {
         Row: {
           created_at: string
           deriv_account_id: string
+          deriv_accounts: Json | null
           deriv_currency: string
+          deriv_email: string | null
           deriv_token: string
+          deriv_user_id: number | null
+          email: string | null
+          fullname: string | null
           id: string
           is_virtual: boolean | null
           updated_at: string
@@ -22,8 +27,13 @@ export type Database = {
         Insert: {
           created_at?: string
           deriv_account_id: string
+          deriv_accounts?: Json | null
           deriv_currency: string
+          deriv_email?: string | null
           deriv_token: string
+          deriv_user_id?: number | null
+          email?: string | null
+          fullname?: string | null
           id: string
           is_virtual?: boolean | null
           updated_at?: string
@@ -31,8 +41,13 @@ export type Database = {
         Update: {
           created_at?: string
           deriv_account_id?: string
+          deriv_accounts?: Json | null
           deriv_currency?: string
+          deriv_email?: string | null
           deriv_token?: string
+          deriv_user_id?: number | null
+          email?: string | null
+          fullname?: string | null
           id?: string
           is_virtual?: boolean | null
           updated_at?: string
