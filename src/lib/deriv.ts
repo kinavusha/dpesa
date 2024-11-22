@@ -4,9 +4,11 @@ export class DerivAPI {
   private ws: WebSocket | null = null;
   private token: string;
   private onBalanceUpdate?: (balance: number) => void;
+  private appId: string;
 
-  constructor(token: string) {
+  constructor(token: string, appId: string) {
     this.token = token;
+    this.appId = appId;
     this.connect();
   }
 
@@ -17,7 +19,7 @@ export class DerivAPI {
         return;
       }
 
-      this.ws = new WebSocket(DERIV_WS_URL);
+      this.ws = new WebSocket(`${DERIV_WS_URL}?app_id=${this.appId}`);
 
       this.ws.onopen = () => {
         this.authorize().then(() => {
@@ -126,4 +128,8 @@ export class DerivAPI {
   }
 }
 
-export const createDerivAPI = (token: string) => new DerivAPI(token);
+export const createDerivAPI = async (token: string) => {
+  const response = await fetch('/api/deriv-config');
+  const { appId } = await response.json();
+  return new DerivAPI(token, appId);
+};

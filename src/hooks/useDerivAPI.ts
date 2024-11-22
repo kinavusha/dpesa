@@ -32,7 +32,7 @@ export const useDerivAPI = () => {
           return;
         }
 
-        const derivAPI = createDerivAPI(profile.deriv_token);
+        const derivAPI = await createDerivAPI(profile.deriv_token);
         
         // Set up real-time balance updates
         derivAPI.setBalanceUpdateHandler(async (newBalance) => {
