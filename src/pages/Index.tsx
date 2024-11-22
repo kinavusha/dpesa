@@ -40,17 +40,30 @@ const Index = () => {
 
   useEffect(() => {
     const handleOAuthRedirect = async () => {
-      const acct = searchParams.get('acct1');
-      const token = searchParams.get('token1');
-      const currency = searchParams.get('cur1');
+      // Extract all account parameters from URL
+      const params = new URLSearchParams(window.location.search);
+      const accounts = [];
+      let i = 1;
+      
+      while (params.has(`acct${i}`) && params.has(`token${i}`) && params.has(`cur${i}`)) {
+        accounts.push({
+          account: params.get(`acct${i}`),
+          token: params.get(`token${i}`),
+          currency: params.get(`cur${i}`)
+        });
+        i++;
+      }
 
-      if (acct && token && currency && session?.user) {
+      if (accounts.length > 0 && session?.user) {
         setIsLoading(true);
         try {
+          // Connect to Deriv WebSocket with the first account's token
           const ws = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${DERIV_APP_ID}`);
           
           ws.onopen = () => {
-            ws.send(JSON.stringify({ authorize: token }));
+            ws.send(JSON.stringify({ 
+              authorize: accounts[0].token 
+            }));
           };
 
           ws.onmessage = async (msg) => {
@@ -65,28 +78,44 @@ const Index = () => {
                   email: deriv_email, 
                   user_id: deriv_user_id,
                   fullname,
-                  account_list
+                  account_list,
+                  balance,
+                  currency
                 } 
               } = data;
 
+              // Update profile with Deriv account information
               const { error: profileError } = await supabase
                 .from('profiles')
                 .upsert({
                   id: session.user.id,
-                  deriv_account_id: acct,
-                  deriv_token: token,
+                  deriv_account_id: accounts[0].account,
+                  deriv_token: accounts[0].token,
                   deriv_currency: currency,
                   deriv_email,
                   deriv_user_id,
                   fullname,
                   deriv_accounts: account_list,
-                  is_virtual: false,
+                  is_virtual: account_list[0]?.is_virtual || false,
                   email: session.user.email,
+                  updated_at: new Date().toISOString()
                 });
 
               if (profileError) {
                 throw profileError;
               }
+
+              // Create initial balance transaction
+              await supabase
+                .from('transactions')
+                .insert({
+                  user_id: session.user.id,
+                  transaction_type: 'initial_balance',
+                  amount: balance,
+                  currency: currency,
+                  status: 'completed',
+                  reference: `Initial balance from Deriv account ${accounts[0].account}`
+                });
 
               toast.success("Successfully connected Deriv account!");
               navigate("/dashboard");

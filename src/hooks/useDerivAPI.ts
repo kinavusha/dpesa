@@ -22,7 +22,7 @@ export const useDerivAPI = () => {
 
         const { data: profile } = await supabase
           .from('profiles')
-          .select('deriv_token')
+          .select('deriv_token, deriv_account_id, deriv_currency')
           .eq('id', session.user.id)
           .single();
 
@@ -35,12 +35,25 @@ export const useDerivAPI = () => {
         const derivAPI = createDerivAPI(profile.deriv_token);
         
         // Set up real-time balance updates
-        derivAPI.setBalanceUpdateHandler((newBalance) => {
+        derivAPI.setBalanceUpdateHandler(async (newBalance) => {
           setBalance(newBalance);
+          
+          // Record balance update in transactions
+          await supabase
+            .from('transactions')
+            .insert({
+              user_id: session.user.id,
+              transaction_type: 'balance_update',
+              amount: newBalance,
+              currency: profile.deriv_currency,
+              status: 'completed',
+              reference: `Balance update for account ${profile.deriv_account_id}`
+            });
         });
 
         // Get initial account info
         const accountInfo = await derivAPI.getAccountInfo();
+        setBalance(accountInfo.balance);
         
         // Update profile with latest Deriv info
         await supabase
@@ -53,7 +66,6 @@ export const useDerivAPI = () => {
           })
           .eq('id', session.user.id);
 
-        setBalance(accountInfo.balance);
         setApi(derivAPI);
       } catch (error) {
         console.error('Failed to initialize Deriv API:', error);
