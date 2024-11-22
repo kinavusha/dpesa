@@ -3,9 +3,11 @@ const DERIV_WS_URL = 'wss://ws.binaryws.com/websockets/v3';
 export class DerivAPI {
   private ws: WebSocket | null = null;
   private token: string;
+  private onBalanceUpdate?: (balance: number) => void;
 
   constructor(token: string) {
     this.token = token;
+    this.connect();
   }
 
   private connect(): Promise<WebSocket> {
@@ -18,68 +20,101 @@ export class DerivAPI {
       this.ws = new WebSocket(DERIV_WS_URL);
 
       this.ws.onopen = () => {
-        this.authorize().then(() => resolve(this.ws!));
+        this.authorize().then(() => {
+          this.subscribeToBalance();
+          resolve(this.ws!);
+        });
       };
 
       this.ws.onerror = (error) => {
         reject(error);
       };
+
+      this.ws.onmessage = (msg) => {
+        const data = JSON.parse(msg.data);
+        if (data.error) {
+          console.error('Deriv WebSocket error:', data.error);
+          return;
+        }
+
+        if (data.msg_type === 'balance') {
+          this.onBalanceUpdate?.(data.balance.balance);
+        }
+      };
     });
   }
 
   private async authorize(): Promise<void> {
-    const ws = await this.connect();
+    if (!this.ws) throw new Error('WebSocket not connected');
+    
     return new Promise((resolve, reject) => {
-      ws.send(JSON.stringify({
+      this.ws!.send(JSON.stringify({
         authorize: this.token
       }));
 
-      ws.onmessage = (msg) => {
+      const handler = (msg: MessageEvent) => {
         const data = JSON.parse(msg.data);
         if (data.error) {
           reject(data.error);
         } else if (data.msg_type === 'authorize') {
+          this.ws!.removeEventListener('message', handler);
           resolve();
         }
       };
+
+      this.ws!.addEventListener('message', handler);
     });
   }
 
-  async getBalance(): Promise<number> {
-    const ws = await this.connect();
+  private subscribeToBalance() {
+    if (!this.ws) return;
+    
+    this.ws.send(JSON.stringify({
+      forget_all: 'balance',
+    }));
+
+    this.ws.send(JSON.stringify({
+      balance: 1,
+      subscribe: 1
+    }));
+  }
+
+  setBalanceUpdateHandler(handler: (balance: number) => void) {
+    this.onBalanceUpdate = handler;
+  }
+
+  async getAccountInfo(): Promise<{
+    balance: number;
+    currency: string;
+    email: string;
+    fullname: string;
+    account_list: any[];
+  }> {
+    if (!this.ws) throw new Error('WebSocket not connected');
+
     return new Promise((resolve, reject) => {
-      ws.send(JSON.stringify({
-        balance: 1
+      this.ws!.send(JSON.stringify({
+        balance: 1,
+        account_list: 1
       }));
 
-      ws.onmessage = (msg) => {
+      const handler = (msg: MessageEvent) => {
         const data = JSON.parse(msg.data);
         if (data.error) {
           reject(data.error);
         } else if (data.msg_type === 'balance') {
-          resolve(data.balance.balance);
+          this.ws!.removeEventListener('message', handler);
+          resolve({
+            balance: data.balance.balance,
+            currency: data.balance.currency,
+            email: data.balance.email,
+            fullname: data.balance.fullname,
+            account_list: data.balance.accounts || []
+          });
         }
       };
-    });
-  }
 
-  async createTransaction(type: 'deposit' | 'withdrawal', amount: number): Promise<string> {
-    const ws = await this.connect();
-    return new Promise((resolve, reject) => {
-      ws.send(JSON.stringify({
-        paymentagent_transfer: 1,
-        type,
-        amount
-      }));
-
-      ws.onmessage = (msg) => {
-        const data = JSON.parse(msg.data);
-        if (data.error) {
-          reject(data.error);
-        } else if (data.msg_type === 'paymentagent_transfer') {
-          resolve(data.paymentagent_transfer.transaction_id);
-        }
-      };
+      this.ws!.addEventListener('message', handler);
     });
   }
 

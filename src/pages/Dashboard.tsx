@@ -1,8 +1,11 @@
 import { Bell, User, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { useDerivAPI } from "@/hooks/useDerivAPI";
 
 const Dashboard = () => {
+  const { balance, isLoading } = useDerivAPI();
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
       {/* Header */}
@@ -28,7 +31,13 @@ const Dashboard = () => {
         {/* Balance */}
         <div className="mb-8">
           <div className="text-gray-600 dark:text-gray-400 mb-3">Deriv Balance</div>
-          <div className="text-4xl font-bold mb-1 dark:text-white">$ 2.00</div>
+          {isLoading ? (
+            <div className="animate-pulse h-10 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+          ) : (
+            <div className="text-4xl font-bold mb-1 dark:text-white">
+              $ {balance?.toFixed(2) || '0.00'}
+            </div>
+          )}
         </div>
 
         {/* Action Buttons */}

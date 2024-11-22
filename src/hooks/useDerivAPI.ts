@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 export const useDerivAPI = () => {
   const [api, setApi] = useState<DerivAPI | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [balance, setBalance] = useState<number | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,13 +26,34 @@ export const useDerivAPI = () => {
           .eq('id', session.user.id)
           .single();
 
-        if (!profile) {
-          toast.error('Profile not found');
+        if (!profile?.deriv_token) {
+          toast.error('Deriv account not connected');
           navigate('/');
           return;
         }
 
         const derivAPI = createDerivAPI(profile.deriv_token);
+        
+        // Set up real-time balance updates
+        derivAPI.setBalanceUpdateHandler((newBalance) => {
+          setBalance(newBalance);
+        });
+
+        // Get initial account info
+        const accountInfo = await derivAPI.getAccountInfo();
+        
+        // Update profile with latest Deriv info
+        await supabase
+          .from('profiles')
+          .update({
+            deriv_accounts: accountInfo.account_list,
+            deriv_email: accountInfo.email,
+            fullname: accountInfo.fullname,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', session.user.id);
+
+        setBalance(accountInfo.balance);
         setApi(derivAPI);
       } catch (error) {
         console.error('Failed to initialize Deriv API:', error);
@@ -50,5 +72,5 @@ export const useDerivAPI = () => {
     };
   }, [navigate]);
 
-  return { api, isLoading };
+  return { api, isLoading, balance };
 };
