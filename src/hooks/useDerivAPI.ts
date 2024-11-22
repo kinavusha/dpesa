@@ -13,18 +13,23 @@ export const useDerivAPI = () => {
   useEffect(() => {
     const initAPI = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) throw sessionError;
         
         if (!session) {
           navigate('/');
           return;
         }
 
-        const { data: profile } = await supabase
+        // Get the profile data with explicit headers
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
-          .select('deriv_token, deriv_account_id, deriv_currency')
+          .select('*')
           .eq('id', session.user.id)
           .single();
+
+        if (profileError) throw profileError;
 
         if (!profile?.deriv_token) {
           toast.error('Deriv account not connected');
